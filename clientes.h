@@ -2,6 +2,7 @@
 #define CLIENTES_H_INCLUDED
 
 const char* traerMes(int);
+const char* traerGenero(char);
 
 class Direccion{
 
@@ -29,7 +30,7 @@ public:
     void setPiso(short);
 };
 
-Direccion::Direccion(char street[30]="CASA S/NÚMERO",int num=0000,int codP=0000,char local[30]="aaaa",short p=0){
+Direccion::Direccion(char street[30]="CASA S/NÃšMERO",int num=0000,int codP=0000,char local[30]="aaaa",short p=0){
     strcpy(calle,street);
     numero=num;
     cp=codP;
@@ -38,7 +39,7 @@ Direccion::Direccion(char street[30]="CASA S/NÚMERO",int num=0000,int codP=0000,
 }
 
 void Direccion::setCalle(char*nuevaCalle){
-calle=nuevaCalle;
+strcpy(calle,nuevaCalle);
 }
 void Direccion::setNumero(int nuevoNumero){
 numero=nuevoNumero;
@@ -58,7 +59,7 @@ void Direccion::cargar(){
     cout << "CALLE: ";
     cin.ignore();
     cin.getline(calle,30);
-    cout << "NÚMERO: ";
+    cout << "NÃšMERO: ";
     cin  >> numero;
     cout << "CODIGO POSTAL: ";
     cin  >> cp;
@@ -71,7 +72,7 @@ void Direccion::cargar(){
 void Direccion::mostrar(){
 
 cout << "CALLE        --->"<< calle << endl;
-cout << "NÚMERO       --->"<< numero << endl;
+cout << "NÃšMERO       --->"<< numero << endl;
 cout << "CODIGO POSTAL--->"<< cp << endl;
 cout << "LOCALIDAD    --->"<< localidad << endl;
 cout << "PISO         --->"<< piso << endl;
@@ -114,7 +115,7 @@ void Fecha::cargar(){
     cin  >> dia;
     cout << "MES: ";
     cin  >> mes;
-    cout << "AÑO: ";
+    cout << "AÃ‘O: ";
     cin >> anio;
 
 }
@@ -186,8 +187,83 @@ public:
     char getGenero(){return genero;}
     const char* getDni(){return dni;}
     const char* getNacionalidad(){return nacionalidad;}
+    /// SETS()
+    void setApellido(char*);
+    void setNombre(char*);
+    void setGenero(char);
+    void setDni(char*);
+    void setNacionalidad(char*);
 
 };
+
+void Persona::setApellido(char *nuevoApellido){
+strcpy(apellidos,nuevoApellido);
+}
+void Persona::setNombre(char *nuevoNombre){
+strcpy(apellidos,nuevoApellido);
+}
+void Persona::setGenero(char nuevoGenero){
+genero=nuevoGenero;
+}
+void Persona::setDni(char *nuevoDni){
+strcpy(dni,nuevoDni);
+}
+void Persona::setNacionalidad(char *nuevoNacionalidad){
+strcpy(nacionalidad,nuevoNacionalidad);
+}
+
+void Persona::cargar(){
+
+    cout << "APELLIDO: ";
+    cin.ignore();
+    cin.getline(apellidos,50);
+    cout << "NOMBRE: ";
+    cin.ignore();
+    cin.getline(nombres,50);
+    cout << "GÃ‰NERO---> "<<endl;
+    cout << "M)Mujer    "<<endl;
+    cout << "H)Hombre   "<<endl;
+    cout << "O)Otro     "<<endl;
+    cout << "OPCIÃ“N---> ";
+    cin  >> genero;
+    cout << "DNI: ";
+    cin.ignore();
+    cin.getline(dni,15);
+    cout << "NACIONALIDAD: ";
+    cin.ignore();
+    cin.getline(nacionalidad,50);
+    cout << "FECHA DE NACIMIENTO--->"<<endl;
+    fechaNac.cargar();
+
+}
+
+void Persona::mostrar(){
+
+    cout << "APELLIDO            ---> "<< apellidos << endl;
+    cout << "NOMBRE              ---> "<< nombres   << endl;
+    cout << "GÃ‰NERO              ---> "<< traerGenero(genero) << endl;
+    cout << "DNI                 ---> "<< dni          << endl;
+    cout << "NACIONALIDAD        ---> "<< nacionalidad << endl;
+    cout << "FECHA DE NACIMIENTO ---> "<< fechaNac.mostrarConBarra() << endl;
+
+}
+const char* traerGenero(char g){
+
+    switch(g){
+    case 'm':
+    case 'M':
+    return "Mujer";
+    break;
+    case 'h':
+    case 'H':
+    return "Hombre";
+    break;
+    case 'o':
+    case '0':
+        return "Otro";
+        break;
+    }
+}
 
 
 #endif // CLIENTES_H_INCLUDED
