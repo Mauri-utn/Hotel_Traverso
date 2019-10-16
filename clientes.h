@@ -1,6 +1,7 @@
 #ifndef CLIENTES_H_INCLUDED
 #define CLIENTES_H_INCLUDED
 
+#include "funciones.h"
 const char* traerMes(int);
 const char* traerGenero(char);
 
@@ -93,6 +94,8 @@ public:
     void mostrarConBarra();
     void mostrarConPalabra();
     void cargar();
+    void cargarVenc();
+    void mostrarVenc();
     ///GETS()
     int getDia(){return dia;}
     int getMes(){return mes;}
@@ -119,19 +122,30 @@ void Fecha::cargar(){
     cin >> anio;
 
 }
+void Fecha::cargarVenc(){
+    cout << "Mes: ";
+    cin  >> mes;
+    cout << "Año: ";
+    cin  >> anio ;
+}
+void Fecha::mostrarVenc(){
+
+    cout << mes << "/" << anio <<endl;
+}
 void Fecha::mostrar(){
     cout << "DIA ---> "<< dia << endl;
     cout << "MES ---> "<< mes << endl;
     cout << "ANIO---> "<< anio << endl;
 }
 
+void
 void Fecha::mostrarConBarra(){
 
     cout << dia << "/" << mes << "/" << anio << endl;
 
 }
 
-void mostrarConPalabra(){
+void Fecha::mostrarConPalabra(){
 
 cout << dia << " de "<<traerMes(mes)<< " del "<< anio << endl;
 
@@ -167,7 +181,7 @@ switch(m){
 }
 
 }
-
+/// CLASE PERSONA /// SE USA PARA CARGAR UN MENOR DE EDAD Y PARTE DE UN CLIENTE
 class Persona {
 
 protected:
@@ -187,12 +201,19 @@ public:
     char getGenero(){return genero;}
     const char* getDni(){return dni;}
     const char* getNacionalidad(){return nacionalidad;}
+    int getDiaNac(){return fechaNac.getDia();}
+    int getMesNac(){return fechaNac.getMes();}
+    int getAnioNac(){return fechaNac.getAnio();}
+
     /// SETS()
     void setApellido(char*);
     void setNombre(char*);
     void setGenero(char);
     void setDni(char*);
     void setNacionalidad(char*);
+    void setDiaNac(int nDia){fechaNac.setDia(nDia);}
+    void setMesNac(int nMes){fechaNac.setMes(nMes);}
+    void setAnioNac(int nAnio){fechaNac.setAnio(nAnio);}
 
 };
 
@@ -264,6 +285,88 @@ const char* traerGenero(char g){
         break;
     }
 }
+
+
+/// CLASE CLIENTE ///
+
+class Cliente:Persona {
+    private:
+    char mail[50];
+    char telefono[30];
+    Direccion domicilio;
+    char NroTarjeta[30],codSeguridad[5];
+    Fecha vencimientoTarjeta;
+
+    public:
+    void cargar();
+    void mostrar();
+    ///GETS()
+    const char* getMail(){return mail;}
+    const char* getTelefono(){return telefono;}
+    const char* getTarjeta(){return NroTarjeta;}
+    const char* getCodSeguridad(){return codSeguridad;}
+    int getMesVenc(){return vencimientoTarjeta.getMes();}
+    int getAnioVenc(){return vencimientoTarjeta.getAnio();}
+    Direccion getDomicilio{return domicilio};
+
+    /// SETS()
+    void setMail(char*);
+    void setTelefono(char*);
+    void setNroTarjeta(char*);
+    void setCodigoSeguridad(char*);
+    void setMesVenc(int nMes){vencimientoTarjeta.setMes(nMes);}
+    void setAnioVenc(int nAnio){vencimientoTarjeta.setAnio(nAnio);}
+
+};
+
+void  Cliente::setMail(char *nuevoMail){
+strcpy(mail,nuevoMail);
+}
+void  Cliente::setTelefono(char *nuevoTelefono){
+strcpy(telefono,nuevoTelefono);
+}
+void  Cliente::setNroTarjeta(char *nuevaTarjeta){
+strcpy(tarjeta,nuevaTarjeta);
+}
+void  Cliente::setCodigoSeguridad(char *nuevoCS){
+strcpy(codSeguridad,CS);
+}
+
+void Cliente::cargar(){
+    Persona::cargar();
+    cout << "MAIL: ";
+    cin.ignore();
+    cin.getline(mail,50);
+    cout << "TELEFONO: ";
+    cin.ignore();
+    cin.getline(telefono,30);
+    cout <<"DOMICILIO--->"<<endl;
+    domicilio.cargar();
+    cout << "NRO.TARJETA: ";
+    cin.ignore();
+    cin.getline(NroTarjeta,30);
+    cout << "CODIGO DE SEGURIDAD: ";
+    cin.ignore();
+    cin.getline(codSeguridad,5);
+    cout << "VENCIMIENTO TARJETA: ";
+    vencimientoTarjeta.cargarVenc();
+
+}
+
+void Cliente::mostrar(){
+    Persona::mostrar();
+    cout << "MAIL                --->"<< mail << endl;
+    cout << "TELEFONO            --->"<< telefono << endl;
+    cout << "DOMICILIO           --->"<<endl;
+    domicilio.mostrar();
+    cout << "NRO.TARJETA         --->"<< NroTarjeta << endl;
+    cout << "CÓDIGO DE SEGURIDAD --->"<< codSeguridad << endl;
+    cout << "VENCIMIENTO TARJETA --->"<< vencimientoTarjeta << endl;
+    cout << "#############################"<< endl;
+    pausa();
+
+}
+
 
 
 #endif // CLIENTES_H_INCLUDED
