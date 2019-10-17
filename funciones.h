@@ -46,7 +46,28 @@ void ponerMatEnCero(float mat[20][3]){
 
 }
 
-void FechaHora(){
+/*int Persona::contrarRegistros(const char*RUTA) DEVUELVE LA CANTIDAD DE REGISTROS 
+{
+    FILE *P;
+    F=fopen(RUTA,"rb");
+    if(F==NULL)
+    {
+        mensaje(1);
+        pausa();
+        return -1;
+    }
+    int tam,tamanioreg,cantidad;
+    fseek (F,0,SEEK_END);
+    tam=ftell(P);
+    tamanioreg=sizeof(Persona);
+    cantidad=tam/tamanioreg;
+    fclose(P);
+    return cantidad;
+
+}*/
+
+
+void FechaHora(){ 
 
 
     time_t tiempo;
