@@ -4,6 +4,7 @@
 #include "funciones.h"
 const char* traerMes(int);
 const char* traerGenero(char);
+bool existe(const char*);
 
 class Direccion{
 
@@ -366,6 +367,29 @@ void Cliente::mostrar(){
     pausa();
 
 }
+
+bool existe(const char*doc){
+FILE*P;
+P=fopen(FILE_CLIENTES,"rb");
+if(P==NULL){
+
+    mensaje(1);
+    pausa();
+    return false;
+}
+Cliente aux;
+while(fread(this,sizeof(Cliente),1,P)==1){
+    if (strcmp(doc,aux.getDni())==0){
+
+        fclose(P);
+        return true;
+    }
+     }
+fclose(P);
+return false;
+
+}
+
 
 
 
