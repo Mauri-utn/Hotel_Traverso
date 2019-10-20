@@ -4,7 +4,7 @@ void ponerVecEnCero(int*,int);
 void ponerMatEnCero(float [20][3]);
 void borrarPantalla();
 void pausa();
-void FechaHora();
+void fechaHora();
 
 void borrarPantalla()
 {
@@ -66,7 +66,7 @@ case 1:
     cout << "ERROR AL ABRIR ARCHIVO"<< endl;
     break;
 case 2:
-    cout << "OPCIÓN INVALIDA"<< endl;
+    cout << "OPCIÃ“N INVALIDA"<< endl;
     break;
 
 }
