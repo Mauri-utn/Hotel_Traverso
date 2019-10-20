@@ -6,6 +6,8 @@
 
 int menuPrincipal(int);
 #include "misFunciones.h"
+#include "menuClientes.h"
+#include "menuHabitaciones.h"
 
 
 int menuPrincipal(int permisos){
@@ -23,17 +25,19 @@ int menuPrincipal(int permisos){
         cout << "5) LIMPIEZA        " << endl;
         cout << "6) CONFIGURACION   " << endl;
         cout << "0) Salir "<< endl;
-        cout << endl << "Opción: ";
+        cout << endl << "OpciÃ³n: ";
         cin >> opcion;
         borrarPantalla();
         switch(opcion){
       case '1':
       case 'a':
       case 'A':
+          menuHabitaciones();
         break;
       case '2':
       case 'b':
       case 'B':
+          menuClientes();
         break;
       case '3':
       case 'c':
