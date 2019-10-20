@@ -2,12 +2,23 @@
 #define MENUCLIENTES_H_INCLUDED
 
 
-#include "funciones.h"
+#include "misFunciones.h"
 ///PROTOTIPO FUNCIONES GLOBALES
 const char* traerMes(int);
 const char* traerGenero(char);
-bool existe(const char*);
+bool existeCliente(const char*);
+bool existeMenor(const char*);
 void buscarCliente (const char*);
+int menuClientes();
+void nuevoCliente();
+bool validarFechadeNac(int,int,int);
+bool grabarPersona(Persona);
+bool grabarCliente(Cliente);
+bool validarDni(const char*);
+int contarRegistrosMenores();
+int contarRegistrosClientes();
+void listadoAlfabetico();
+bool validarTarjeta(char*);
 
 
 class Direccion{
@@ -36,7 +47,7 @@ public:
     void setPiso(short);
 };
 
-Direccion::Direccion(char street[30]="CASA S/NÚMERO",int num=0000,int codP=0000,char local[30]="aaaa",short p=0){
+Direccion::Direccion(char street[30]="CASA S/NÃšMERO",int num=0000,int codP=0000,char local[30]="aaaa",short p=0){
     strcpy(calle,street);
     numero=num;
     cp=codP;
@@ -66,7 +77,7 @@ void Direccion::cargar(){
     cout << "CALLE: ";
     cin.ignore();
     cin.getline(calle,30);
-    cout << "NÚMERO: ";
+    cout << "NÃšMERO: ";
     cin  >> numero;
     cout << "CODIGO POSTAL: ";
     cin  >> cp;
@@ -79,7 +90,7 @@ void Direccion::cargar(){
 void Direccion::mostrar(){
 
 cout << "CALLE        --->"<< calle << endl;
-cout << "NÚMERO       --->"<< numero << endl;
+cout << "NÃšMERO       --->"<< numero << endl;
 cout << "CODIGO POSTAL--->"<< cp << endl;
 cout << "LOCALIDAD    --->"<< localidad << endl;
 cout << "PISO         --->"<< piso << endl;
@@ -124,14 +135,14 @@ void Fecha::cargar(){
     cin  >> dia;
     cout << "MES: ";
     cin  >> mes;
-    cout << "AÑO: ";
+    cout << "AÃ‘O: ";
     cin >> anio;
 
 }
 void Fecha::cargarVenc(){
     cout << "Mes: ";
     cin  >> mes;
-    cout << "Año: ";
+    cout << "AÃ±o: ";
     cin  >> anio ;
 }
 void Fecha::mostrarVenc(){
@@ -223,9 +234,8 @@ public:
     ///FUNCIONES DE ARCHIVOS
     bool escribirDisco(int);
     bool leerDisco(int);
-    bool grabarPersona();
-    void listadoAlfabetico();
-    int contarRegistros();
+
+
 
 
 };
@@ -254,20 +264,53 @@ void Persona::cargar(){
     cout << "NOMBRE: ";
     cin.ignore();
     cin.getline(nombres,50);
-    cout << "GÉNERO---> "<<endl;
+    cout << "GÃ‰NERO---> "<<endl;
     cout << "M)Mujer    "<<endl;
     cout << "H)Hombre   "<<endl;
     cout << "O)Otro     "<<endl;
-    cout << "OPCIÓN---> ";
+    cout << "OPCIÃ“N---> ";
     cin  >> genero;
     cout << "DNI: ";
     cin.ignore();
-    cin.getline(dni,15);
+    cin.getline(dni,10);
+    while(!validarDni(dni)){
+    borrarPantalla();
+    char sel;
+    cout << "EL DNI YA ESTA REGISTRADO"<<endl;
+    cout << "salir(s)/cargar otro(c)"<< endl;
+    cin  >> sel;
+    switch (sel){
+    case 's':
+    case 'S':
+    return 0;
+    break;
+    case 'c':
+    case 'C':
+    cout << "DNI: ";
+    cin.ignore();
+    cin.getline(dni,10);
+
+    break;
+default:
+    mensajes(2);
+    break;
+        }
+}
     cout << "NACIONALIDAD: ";
     cin.ignore();
     cin.getline(nacionalidad,50);
     cout << "FECHA DE NACIMIENTO--->"<<endl;
     fechaNac.cargar();
+    bool vof=validarFechadeNac(getDiaNac(),getMesNac(),getAnioNac());
+    while (vof==false){
+        borrarPantalla();
+        cout <<"FECHA DE NACIMIENTO INVALIDA POR FAVOR VOLVER A INGRESAR!"<<endl;
+        pausa();
+        borrarPantalla();
+        cout << "FECHA DE NACIMIENTO--->"<<endl;
+        fechaNac.cargar();
+        vof=validarFechadeNac(getDiaNac(),getMesNac(),getAnioNac());
+    }
 
 }
 
@@ -275,7 +318,7 @@ void Persona::mostrar(){
 
     cout << "APELLIDO            ---> "<< apellidos << endl;
     cout << "NOMBRE              ---> "<< nombres   << endl;
-    cout << "GÉNERO              ---> "<< traerGenero(genero) << endl;
+    cout << "GÃ‰NERO              ---> "<< traerGenero(genero) << endl;
     cout << "DNI                 ---> "<< dni          << endl;
     cout << "NACIONALIDAD        ---> "<< nacionalidad << endl;
     cout << "FECHA DE NACIMIENTO ---> "<< fechaNac.mostrarConBarra() << endl;
@@ -299,7 +342,7 @@ const char* traerGenero(char g){
     }
 }
 
-bool Persona::grabarPersona(){
+bool grabarPersona(Persona aux){
 
 FILE*P;
 P=fopen(FILE_MENORES,"ab");
@@ -308,12 +351,12 @@ if(P==NULL){
     pausa();
     return false;
 }
-fwrite(this,sizeof(Persona),1,P);
+fwrite(&aux,sizeof(Persona),1,P);
 fclose(P);
 return true;
 }
 
-void Persona::ListadoAlfabetico(){
+void listadoAlfabetico(){
 
   long cant;
   cant=contarRegistros(FILE_PERSONA);
@@ -340,7 +383,7 @@ void mostrarVector(Persona *v, long cant){
     int i;
     for(i=0; i<cant; i++){
         if(v[i].estado==true){
-        v[i].mostrar();
+        v[i]->mostrar();
         pausa();
         }
     }
@@ -372,19 +415,13 @@ void ordenarVector(Persona*v, long cant){
       v[i]=v[posmin];
       v[posmin]=aux;
     }
-  }
+}
 
 
-
-
-
-
-
-int Persona::contrarRegistros(){
+int contarRegistrosMenores(){
     FILE *P;
     F=fopen(FILE_MENORES,"rb");
-    if(F==NULL)
-    {
+    if(F==NULL){
         mensaje(1);
         pausa();
         return -1;
@@ -399,6 +436,32 @@ int Persona::contrarRegistros(){
 
 }
 
+bool existeMenor(const char*docu){
+    FILE*P;
+    P=fopen(FILE_CLIENTES,"rb");
+    if(P==NULL){
+
+    mensaje(1);
+    pausa();
+    return false;
+    }
+    if(contarRegistrosMenores()==0){
+        fclose(P);
+        return false;
+    }
+
+    Cliente aux;
+    while(fread(&aux,sizeof(Cliente),1,P)==1){
+    if (strcmp(docu,aux.getDni())==0){
+
+        fclose(P);
+        return true;
+        }
+     }
+    fclose(P);
+    return false;
+
+}
 
 
 
@@ -439,6 +502,23 @@ class Cliente:Persona {
 
 };
 
+int contarRegistrosClientes(){
+    FILE *P;
+    F=fopen(FILE_CLIENTES,"rb");
+    if(F==NULL){
+        mensaje(1);
+        pausa();
+        return -1;
+    }
+    int tam,tamanioreg,cantidad;
+    fseek (F,0,SEEK_END);
+    tam=ftell(P);
+    tamanioreg=sizeof(Cliente);
+    cantidad=tam/tamanioreg;
+    fclose(P);
+    return cantidad;
+
+}
 
 
 
@@ -457,23 +537,60 @@ strcpy(codSeguridad,CS);
 
 void Cliente::cargar(){
     Persona::cargar();
-    cout << "MAIL: ";
+    cout << "MAIL: "; /// FALTA HACERLE VALIDACION
     cin.ignore();
     cin.getline(mail,50);
-    cout << "TELEFONO: ";
+    cout << "TELEFONO: "; /// FALTA HACERLE VALIDACION
     cin.ignore();
     cin.getline(telefono,30);
-    cout <<"DOMICILIO--->"<<endl;
+    cout <<"DOMICILIO--->"<<endl; /// FALTA HACERLE VALIDACION
     domicilio.cargar();
     cout << "NRO.TARJETA: ";
     cin.ignore();
     cin.getline(NroTarjeta,30);
+    while(!validarTarjeta()){
+    borrarPantalla();
+    char sel;
+    cout << "LA TARJETA YA ESTA REGISTRADA"<<endl;
+    cout << "salir(s)/cargar otra(c)      "<< endl;
+    cin  >> sel;
+    switch (sel){
+    case 's':
+    case 'S':
+    return 0;
+    break;
+    case 'c':
+    case 'C':
+    cout << "NRO.TARJETA: ";
+    cin.ignore();
+    cin.getline(NroTarjeta,30);
+    break;
+default:
+    mensajes(2);
+    break;
+
+    }
+}
     cout << "CODIGO DE SEGURIDAD: ";
     cin.ignore();
     cin.getline(codSeguridad,5);
     cout << "VENCIMIENTO TARJETA: ";
     vencimientoTarjeta.cargarVenc();
 
+}
+
+bool grabarCliente(Cliente aux){
+
+FILE*P;
+P=fopen(FILE_CLIENTES,"ab");
+if(P==NULL){
+    mensaje(1);
+    pausa();
+    return false;
+}
+fwrite(&aux,sizeof(Cliente),1,P);
+fclose(P);
+return true;
 }
 
 void Cliente::mostrar(){
@@ -483,14 +600,14 @@ void Cliente::mostrar(){
     cout << "DOMICILIO           --->"<<endl;
     domicilio.mostrar();
     cout << "NRO.TARJETA         --->"<< NroTarjeta << endl;
-    cout << "CÓDIGO DE SEGURIDAD --->"<< codSeguridad << endl;
+    cout << "CÃ“DIGO DE SEGURIDAD --->"<< codSeguridad << endl;
     cout << "VENCIMIENTO TARJETA --->"<< vencimientoTarjeta << endl;
     cout << "#############################"<< endl;
     pausa();
 
 }
 /// FUNCIONES PARA COMBINAR CON HABITACIONES
-bool existe(const char*doc){
+bool existeCliente(const char*doc){
 FILE*P;
 P=fopen(FILE_CLIENTES,"rb");
 if(P==NULL){
@@ -498,6 +615,10 @@ if(P==NULL){
     mensaje(1);
     pausa();
     return false;
+}
+if(contarRegistrosClientes()==0){
+    fclose(P);
+ return false;
 }
 Cliente aux;
 while(fread(this,sizeof(Cliente),1,P)==1){
@@ -533,6 +654,206 @@ while(fread(&aux,sizeof(Cliente),1,P)==1){
      }
 fclose(P);
 return;
+
+}
+/// FIN FUNCIONES PARA COMBINAR CON HABITACIONES
+
+int menuClientes(){
+char op;
+while(true){
+    borrarPantalla();
+    cout << "-----------CLIENTES----------" << endl;
+    cout << "-----------------------------" << endl;
+    cout << "1) NUEVO CLIENTE             " << endl; /// se carga nuevo cliente y menores de edad
+    cout << "2) MODIFICAR CLIENTE.        " << endl;/// modifica el campo que le indiquemos
+    cout << "3) BUSCAR CLIENTE            " << endl; /// busca y muestra un cliente segun lo que se ingrese por teclado
+    cout << "4) MOSTRAR TODOS LOS CLIENTES" << endl; /// muestra todos ordenados alfabeticamente o segun se indique por teclado
+    cout << "0) Salir "<< endl;
+    cout << endl << "OpciÃ³n: ";
+    cin >> op;
+    borrarPantalla();
+    switch(op){
+      case '1':
+      case 'a':
+      case 'A':
+      nuevoCliente();
+        break;
+      case '2':
+      case 'b':
+      case 'B':
+
+        break;
+      case '3':
+      case 'c':
+      case 'C':
+        break;
+      case '4':
+      case 'd':
+      case 'D':
+        break;
+      case '0':
+        return 0;
+      break;
+    }
+    cout << endl;
+
+  }
+
+
+}
+
+void nuevoCliente(){
+char selec;
+cout << "1)CARGAR NUEVO CLIENTE "<< endl;
+cout << "2)CARGAR MENOR DE EDAD "<< endl;
+cin  >> selec;
+
+if (selec=='1'||selec=='a'||selec=='A'){
+Cliente reg;
+reg.cargar();
+}
+else if(selec=='2'||selec=='b'||selec=='B'){
+    Persona registro;
+registro.cargar();
+}
+if (selec=='1'||selec=='a'||selec=='A'){
+
+if(grabarCliente(reg)){
+        cout << "CLIENTE GRABADO CON Ã‰XITO"<< endl;
+        pausa();
+        return 0;
+
+  }
+
+}
+if(selec=='2'||selec=='b'||selec=='B'){
+if(grabarPersona(registro)){
+        cout << "MENOR GRABADO CON Ã‰XITO"<< endl;
+        pausa();
+        return 0;
+     }
+  }
+
+}
+
+bool validarFechadeNac(int _dia,int _mes, int _anio){
+
+    time_t tiempo;
+    struct tm *tmPtr;
+    tiempo = time(NULL);
+    tmPtr = localtime(&tiempo);
+    ///FECHA ACTUAL tmPtr->tm_mday, tmPtr->tm_mon+1, 1900+tmPtr->tm_year
+
+    if(_dia<0||_mes<0||_anio<0)return false;
+    if(_anio>1900+tmPtr->tm_year||_anio<1900)return false;
+    int *vecdias;
+    const int meses=12;
+    int a;
+    a=biciesto(_anio);
+    if(a==1){
+        vecdias=(int*)malloc(meses*sizeof(int));
+        cargarDias(vecdias,1);
+        if(_dia>vecdias[mes-1]){
+            free(vecdias);
+            return false;
+        }
+    }
+    else{
+        vecdias=(int*)malloc(meses*sizeof(int));
+        cargarDias(vecdias,0);
+        if(_dia>vecdias[mes-1]){
+            free(vecdias);
+            return false;
+        }
+    }
+    if (_anio==1900+tmPtr->tm_year){
+        if (_mes>tmPtr->tm_mon+1)
+            return false;
+        if(_mes==tmPtr->tm_mon+1){
+            if(_dia>tmPtr->tm_mday){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+int biciesto(int a){
+
+    if ((a%4==0&&a%100!=0)||a%400==0)
+        return 1;
+    else
+        return 0;
+}
+void cargarDias(int *dias, int opc){
+    if (opc==1){
+        dias[0]=31;
+        dias[1]=29;
+        dias[2]=31;
+        dias[3]=30;
+        dias[4]=31;
+        dias[5]=30;
+        dias[6]=31;
+        dias[7]=31;
+        dias[8]=30;
+        dias[9]=31;
+        dias[10]=30;
+        dias[11]=31;
+    }
+    else{
+        dias[0]=31;
+        dias[1]=28;
+        dias[2]=31;
+        dias[3]=30;
+        dias[4]=31;
+        dias[5]=30;
+        dias[6]=31;
+        dias[7]=31;
+        dias[8]=30;
+        dias[9]=31;
+        dias[10]=30;
+        dias[11]=31;
+    }
+}
+
+bool validarDni(const char *doc){
+
+
+
+if(existeCliente(doc)){
+
+    return false;
+}
+if(existeMenor()){
+    return false;
+}
+
+return true;
+}
+
+bool validarTarjeta(char *tarjeta){
+FILE*P;
+P=fopen(FILE_CLIENTES,"rb");
+if(P==NULL){
+    mensajes(1);
+    pausa();
+    return false;
+}
+if(contarRegistrosClientes()==0){
+
+    fclose(P);
+    return true;
+}
+Cliente aux;
+while(fread(&aux,sizeof(Cliente),1,P)==1){
+
+    if(strcmp(tarjeta,aux.getTarjeta())==0){
+            fclose(P);
+            return false;
+    }
+
+}
+fclose(P);
+return true;
 
 }
 
