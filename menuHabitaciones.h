@@ -6,6 +6,8 @@
 #include "menuClientes.h"
 #include "misFunciones.h"
 
+int menuHabitaciones();
+
 /*class Archivos
 {
 private:
