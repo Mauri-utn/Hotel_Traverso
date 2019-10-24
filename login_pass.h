@@ -3,7 +3,7 @@
 
 #include "misFunciones.h"
 int menuLogins(char);
-void recuperarPass();
+bool recuperarPass();
 bool cambiarPass();
 /// se lee el archivo de empleados , en ambos casos se pide que verifique sus datos para recuperar o para cambiarla
 
@@ -17,10 +17,10 @@ int menuLogins(char selec){
           if(recuperarPass()){
               return 0;
                 }
-                /// dentro de la funcion se tiene que mostrar la contrase�a,
+                /// dentro de la funcion se tiene que mostrar la contraseña,
                 /// luego de pedirle sus datos para validar indentidad
                 else{
-                    cout << "LO SENTIMOS NO SE PUDO RECUPERAR CONTRASE�A"<< endl;
+                    cout << "LO SENTIMOS NO SE PUDO RECUPERAR CONTRASEÑA"<< endl;
                     cout << "Puede que los datos ingresados no sean validos"<< endl;
                 }
         break;
@@ -28,12 +28,12 @@ int menuLogins(char selec){
       case 'd':
       case 'D':
           if(cambiarPass()){
-            cout << "CONTRASE�A MODIFICADA CON �XITO!"<< endl;
+            cout << "CONTRASEÑA MODIFICADA CON ÉXITO!"<< endl;
             pausa();
             return 0;
           }
           else{
-            cout << "LO SIENTO NO SE PUDO MODIFICAR CONTRASE�A"<<endl;
+            cout << "LO SIENTO NO SE PUDO MODIFICAR CONTRASEÑA"<<endl;
             cout << "Puede que los datos ingresados no sean validos"<< endl;
           }
         break;
@@ -41,6 +41,24 @@ int menuLogins(char selec){
         }
         cout << endl;
         return -1;
+
+}
+
+bool recuperarPass(){
+cout << "PARA RECUPERAR LA CONTRASEÑA LE VAMOS A PEDIR QUE VALIDE SUS DATOS."<< endl;
+pausa();
+cout << "EN CONSTRUCCION"<< endl;
+pausa();
+return true;
+
+}
+
+bool cambiarPass(){
+cout << "PARA CAMBIAR LA CONTRASEÑA LE VAMOS A PEDIR QUE VALIDE SUS DATOS."<< endl;
+pausa();
+cout << "EN CONSTRUCCION"<< endl;
+pausa();
+return true;
 
 }
 
