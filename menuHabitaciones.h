@@ -1,4 +1,3 @@
-
 #ifndef MENUHABITACIONES_H_INCLUDED
 //#include "menuClientes.h"
 //#include "misFunciones.h"
@@ -6,11 +5,10 @@
 #include<iostream>
 #include<stdio.h>
 #include<time.h>
-#include"string.h" /// POR QUE LO PONES ACA ?
+#include"string.h"
 #define MENUHABITACIONES_H_INCLUDED
 
-const char *FILE_GASTOS = "habitaciones.dat";
-const char *FILE_HABITACIONES = "gastos.dat";
+
 
 
 using namespace std;
@@ -102,7 +100,7 @@ bool comparar_fechas(char ini[11],char fin[11],int a,int m,int d)
     mf2=fin[4]-'0';
     af1=fin[8]-'0';
     af2=fin[9]-'0';
-    if((a-2000)>=((ai1*10)+ai2)&&(m>=((mi1*10)+mi2))&&(d>=(di1*10)+di2))
+    if((a-2000)>=((ai1*10)+ai2)&&(m>=((mi1*10)+mi2))&&(d>=(di1*10)+di2)&&(a-2000)<=((af1*10)+af2)&&(m<=(mf1*10)+mf2)&&(d<=(df1*10)+df2))
     {
         return true;
     }
@@ -114,13 +112,14 @@ bool comparar_fechas(char ini[11],char fin[11],int a,int m,int d)
 class Gasto
 {
 private:
-    int id;
-    char habitacion[4],tipo;
+    int id,tipo;
+    char habitacion[4];
     float importe;
     char descripcion[240];
     FechaSistema fec;
 public:
     void consulta_habitacion(); ///Muestra los gastos correspondientes al ultimo cambio de estado
+    void consulta_total();///Muestra todos los gastos
     void consulta_habitacion_fecha(); ///Muestra los gastos dentro de 2 fechas
     void consulta_habitacion_tipo(); ///Muestra todos los gastos de la habitacion y tipo seleccionado
     void consulta_tipo(); ///Muestra todos los gastos correspondientes al tipo seleccionado
@@ -261,6 +260,111 @@ void Gasto::consulta_habitacion_fecha()
     fclose(g);
 }
 
+void Gasto::consulta_habitacion_tipo()
+{
+    FILE *g;
+    char cons[4];
+    int tip;
+    g=fopen("gastos.dat","rb");
+    if(g==NULL)
+    {
+        cout<<"Fallo al abrir el archivo";
+        return;
+    }
+    cout<<"Ingrese la habitacion por la que quiere consultar: ";
+    cin>>cons;
+    cout<<"Ingrese el tipo de gasto que quiere consultar: ";
+    cin>>tip;
+    while(fread(this,sizeof(*this),1,g)==1)
+    {
+        if((strcmp(habitacion,cons)==0)&&(tipo==tip))
+        {
+            cout<<id<<endl;
+            cout<<habitacion<<endl;
+            cout<<tipo<<endl;
+            cout<<importe<<endl;
+            cout<<descripcion<<endl<<endl;
+            cout<<fec.mostar_dia()<<"/"<<fec.mostar_mes()<<"/"<<fec.mostar_anio()<<"  "<<fec.mostar_hora()<<":"<<fec.mostar_minuto()<<endl;
+            cout<<"-------------------------------"<<endl;
+        }
+    }
+    fclose(g);
+}
+
+void Gasto::consulta_total()
+{
+    FILE *g;
+    g=fopen("gastos.dat","rb");
+    if(g==NULL)
+    {
+        cout<<"Fallo al abrir el archivo";
+        return;
+    }
+    while(fread(this,sizeof(*this),1,g)==1)
+    {
+
+        cout<<id<<endl;
+        cout<<habitacion<<endl;
+        cout<<tipo<<endl;
+        cout<<importe<<endl;
+        cout<<descripcion<<endl<<endl;
+        cout<<fec.mostar_dia()<<"/"<<fec.mostar_mes()<<"/"<<fec.mostar_anio()<<"  "<<fec.mostar_hora()<<":"<<fec.mostar_minuto()<<endl;
+        cout<<"-------------------------------"<<endl;
+
+    }
+    fclose(g);
+}
+
+
+void Gasto::anular()
+{
+    FILE *g,*aux;
+    int idanul;
+    g=fopen("gastos.dat","rb");
+    aux=fopen("auxiliar.dat","wb");
+    if(g==NULL)
+    {
+        cout<<"Fallo al abrir el archivo01";
+        return;
+    }
+    if(aux==NULL)
+    {
+        cout<<"Fallo al abrir el archivo02"<<endl;
+        return;
+    }
+    cout<<"Ingrese el id del gasto que quiere anular";
+    cin>>idanul;
+    while(fread(this,sizeof(*this),1,g)==1)
+    {
+
+        if(id!=idanul)
+        {
+            fwrite(this,sizeof(*this),1,aux);
+        }
+    }
+    fclose(g);
+    fclose(aux);
+    g=fopen("gastos.dat","wb");
+    aux=fopen("auxiliar.dat","rb");
+    if(g==NULL)
+    {
+        cout<<"Fallo al abrir el archivo03";
+        return;
+    }
+    if(aux==NULL)
+    {
+        cout<<"Fallo al abrir el archivo04";
+        return;
+    }
+    while(fread(this,sizeof(*this),1,aux)==1)
+    {
+            fwrite(this,sizeof(*this),1,g);
+    }
+fclose(g);
+fclose(aux);
+
+}
+#endif // MENUHABITACIONES_H_INCLUDED
 int menuHabitaciones(){
 
 cout << "En proceso ..."<< endl;
