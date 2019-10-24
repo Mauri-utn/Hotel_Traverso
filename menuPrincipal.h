@@ -1,6 +1,7 @@
 #ifndef MENUPRINCIPAL_H_INCLUDED
 #define MENUPRINCIPAL_H_INCLUDED
 
+
 //#include "cliente.h"
 //#include "habitaciones.h"
 
@@ -12,10 +13,13 @@ int menuPrincipal(int);
 
 int menuPrincipal(int permisos){
 
-    fechaHora();
+
+
+    if(permisos==1){
     char opcion;
     while(true){
         borrarPantalla();
+        fechaHora(); /// ver funcion actualizar segundo a segundo 
         cout << "---------PRINCIPAL---------" << endl;
         cout << "---------------------------" << endl;
         cout << "1) HABITACIONES    " << endl;
@@ -64,8 +68,12 @@ int menuPrincipal(int permisos){
         cout << endl;
 
       }
-
+    }
+    ///if(permisos==2)menuLimpieza();
+    ///if(permisos==3)menuMantenimiento();
+    return permisos;
 }
+
 
 
 
