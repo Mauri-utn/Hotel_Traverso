@@ -82,8 +82,31 @@ public:
     {
         return minuto;
     }
-
+    void set_dia(int d)
+    {
+        dia=d;
+    }
+    void set_mes(int m)
+    {
+        mes=m;
+    }
+    void set_anio(int a)
+    {
+        anio=a;
+    }
+    void hora_standar()
+    {
+        hora=12;
+        minuto=00;
+    }
 };
+void convertir_fecha(char v[11],int vint[3])
+{
+    vint[0]=(((v[0]-'0')*10)+(v[1]-'0'));
+    vint[1]=(((v[3]-'0')*10)+(v[4]-'0'));
+    vint[2]=(((v[8]-'0')*10)+(v[9]-'0'))+2000;
+
+}
 bool comparar_fechas(char ini[11],char fin[11],int a,int m,int d)
 {
     //if((a-1900>=strcat(ini[8],ini[9])-'0')&&(m>=strcat(ini[3],ini[4])-'0')&&(d>=strcat(ini[0],ini[1])-'0')&&(a-1900<=strcat(fin[8],fin[9])-'0')&&(m<=strcat(fin[3],fin[4])-'0')&&(d<=strcat(fin[0],fin[1])-'0'))
@@ -169,7 +192,8 @@ private:
     float pago_adelantado;
     FechaSistema fec_ingreso,fec_salida;
 public:
-    void consulta(); ///Consulta todas las habitaciones reservadas
+    void consulta(); ///Consulta todas las habitaciones reservadas actuales
+    void consulta_total();///consulta todas las reservas hechas
     void cancelar(); ///Cancela una reserva
     void cargar  (); ///Carga una nueva reserva
 };
@@ -324,12 +348,12 @@ void Gasto::anular()
     aux=fopen("auxiliar.dat","wb");
     if(g==NULL)
     {
-        cout<<"Fallo al abrir el archivo01";
+        cout<<"Fallo al abrir el archivo";
         return;
     }
     if(aux==NULL)
     {
-        cout<<"Fallo al abrir el archivo02"<<endl;
+        cout<<"Fallo al abrir el archivo"<<endl;
         return;
     }
     cout<<"Ingrese el id del gasto que quiere anular";
@@ -348,28 +372,86 @@ void Gasto::anular()
     aux=fopen("auxiliar.dat","rb");
     if(g==NULL)
     {
-        cout<<"Fallo al abrir el archivo03";
+        cout<<"Fallo al abrir el archivo";
         return;
     }
     if(aux==NULL)
     {
-        cout<<"Fallo al abrir el archivo04";
+        cout<<"Fallo al abrir el archivo";
         return;
     }
     while(fread(this,sizeof(*this),1,aux)==1)
     {
-            fwrite(this,sizeof(*this),1,g);
+        fwrite(this,sizeof(*this),1,g);
     }
-fclose(g);
-fclose(aux);
+    fclose(g);
+    fclose(aux);
 
 }
-#endif // MENUHABITACIONES_H_INCLUDED
-int menuHabitaciones(){
+void Habitacion_reserva::cargar()
+{
+    char fi[11],fs[11];
+    int aux[3];
+    FILE *r;
+    r=fopen("reserva.dat","ab");
+    if(r==NULL)
+    {
+        cout<<"Fallo al abrir el archivo";
+        return;
+    }
+    fseek(r,0,2);
+    id=((ftell(r)/sizeof(*this))+1);
+    cout<<"Ingrese la habitacion que quiere reservar: ";
+    cin>>habitacion;
+    estado='A';
+    cout<<"Ingrese el importe del pago adelantado: $";
+    cin>>pago_adelantado;
+    cout<<"Ingrese la fecha de entrada: ";
+    cin>>fi;
+    convertir_fecha(fi,aux);
+    fec_ingreso.set_dia(aux[0]);
+    fec_ingreso.set_mes(aux[1]);
+    fec_ingreso.set_anio(aux[2]);
+    fec_ingreso.hora_standar();
+    cout<<"Ingrese la fecha de salida: ";
+    cin>>fs;
+    convertir_fecha(fs,aux);
+    fec_salida.set_dia(aux[0]);
+    fec_salida.set_mes(aux[1]);
+    fec_salida.set_anio(aux[2]);
+    fec_salida.hora_standar();
 
-cout << "En proceso ..."<< endl;
-pausa();
-return 0;
+    fwrite(this,sizeof(*this),1,r);
+
+    fclose(r);
+}
+
+void Habitacion_reserva::consulta_total()
+{
+    FILE *r;
+    r=fopen("reserva.dat","rb");
+    if(r==NULL)
+    {
+        cout<<"Fallo al abrir el archivo";
+        return;
+    }
+    while(fread(this,sizeof(*this),1,r)==1)
+    {
+            cout<<"Id: "<<id<<endl;
+            cout<<"Habitacion: "<<habitacion<<endl;
+            cout<<"Pago adelantado: $"<<pago_adelantado<<endl;
+            cout<<fec_ingreso.mostar_dia()<<"/"<<fec_ingreso.mostar_mes()<<"/"<<fec_ingreso.mostar_anio()<<"  "<<fec_ingreso.mostar_hora()<<":"<<fec_ingreso.mostar_minuto()<<endl;
+            cout<<fec_salida.mostar_dia()<<"/"<<fec_salida.mostar_mes()<<"/"<<fec_salida.mostar_anio()<<"  "<<fec_salida.mostar_hora()<<":"<<fec_salida.mostar_minuto()<<endl;
+            cout<<"-------------------------------"<<endl;
+    }
+    fclose(r);
+}
+int menuHabitaciones()
+{
+
+    cout << "En proceso ..."<< endl;
+    //pausa();
+    return 0;
 }
 
 
